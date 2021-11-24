@@ -14,7 +14,7 @@ We plan on making a multiplayer connect 4 game. The project will have multiple d
 This may change depending on our needs but for now the plan is to use:
 
 * Boost.Asio - a networking library
-* cairomm - simple graphics library
+* SFML (for graphics)
 
 ## C++ Features
 
