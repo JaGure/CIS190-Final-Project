@@ -63,3 +63,13 @@ void board::insert(int col)
         colEnd--;
     }
 }
+
+// checks if a player has won
+// returns 1 if red has one, -1 if yellow has won, 0 otherwise
+int board::checkForWin()
+{
+    // TODO: write this function
+    // also need to handle edge case where board is full and there's a draw?
+
+    return 0;
+}

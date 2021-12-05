@@ -16,7 +16,15 @@ int main()
     // for keeping track of where the mouse is on the screen (which column)
     auto mouseCol{0};
 
-    bool flip{false};
+    int winner{0};
+
+    sf::Font font;
+    if (!font.loadFromFile("coolvetica rg.otf"))
+    {
+        std::cerr << "Could not load font"
+                  << "\n";
+        exit(1);
+    }
 
     board board{};
 
@@ -42,10 +50,13 @@ int main()
                 mouseCol = event.mouseMove.x * numCols / width;
                 break;
             case sf::Event::MouseButtonPressed:
-                // place piece on left click
-                if (event.mouseButton.button == sf::Mouse::Left)
+                // place piece on left click (if game not over)
+                if (event.mouseButton.button == sf::Mouse::Left && winner == 0)
                 {
                     board.insert(mouseCol);
+
+                    // check if the user has won after placing a piece
+                    winner = board.checkForWin();
                 }
                 break;
             default:
@@ -98,6 +109,32 @@ int main()
             }
 
             colStart++;
+        }
+
+        // draw the victory message
+        if (winner != 0)
+        {
+            sf::RectangleShape winBox(sf::Vector2f(width * 2 / 3, height * 1 / 3));
+            winBox.setPosition(width / 6, height / 3);
+            winBox.setFillColor(sf::Color::Black);
+
+            sf::Text winText;
+            winText.setFont(font);
+
+            std::string winMessage = (winner == 1 ? "Red" : "Yellow");
+            winMessage += " wins!";
+            winText.setString(winMessage);
+            winText.setCharacterSize(height / 7);
+            winText.setFillColor(winner == 1 ? sf::Color::Red : sf::Color::Yellow);
+
+            // center the win message
+            sf::FloatRect winTextBounds = winText.getLocalBounds();
+            winText.setOrigin(winTextBounds.left + winTextBounds.width / 2.f,
+                              winTextBounds.top + winTextBounds.height / 2.f);
+            winText.setPosition(sf::Vector2f(width / 2, height / 2));
+
+            window.draw(winBox);
+            window.draw(winText);
         }
 
         // end the current frame

@@ -17,7 +17,7 @@ public:
 
     std::array<std::array<int, 7>, 6> getBoard();
     void insert(int);
-    bool checkForWin();
+    int checkForWin();
 };
 
 #endif
