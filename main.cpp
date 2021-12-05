@@ -16,6 +16,8 @@ int main()
     // for keeping track of where the mouse is on the screen (which column)
     auto mouseCol{0};
 
+    bool flip{false};
+
     board board{};
 
     // open the window
@@ -43,7 +45,8 @@ int main()
                 // place piece on left click
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    board.insert(true, mouseCol);
+                    flip = !flip;
+                    board.insert(flip, mouseCol);
                 }
                 break;
             default:
@@ -57,20 +60,7 @@ int main()
         // clear the window with blue color
         window.clear(sf::Color::Blue);
 
-        // draw the board background
-        for (auto i{0}; i < numRows; i++)
-        {
-            for (auto j{0}; j < numCols; j++)
-            {
-                sf::CircleShape hole(pieceRadius);
-                hole.setPosition(padding + (j * 2 * pieceRadius) + (j * padding * 2),
-                                 padding + (i * 2 * pieceRadius) + (i * padding * 2));
-                hole.setFillColor(sf::Color::Black);
-                window.draw(hole);
-            }
-        }
-
-        // draw the current game state (pieces)
+        // draw the board
         auto gameBoard{board.getBoard()};
 
         auto colStart{gameBoard.begin()};
@@ -83,41 +73,33 @@ int main()
 
             while (rowStart < rowEnd)
             {
-                if (*rowStart == 1 || *rowStart == -1)
+                auto colPos{colStart - gameBoard.begin()};
+                auto rowPos{rowStart - (*colStart).begin()};
+
+                sf::CircleShape piece(pieceRadius);
+                piece.setPosition(padding + (rowPos * 2 * pieceRadius) + (rowPos * padding * 2),
+                                  padding + (colPos * 2 * pieceRadius) + (colPos * padding * 2));
+
+                if (*rowStart == 1)
                 {
-                    auto colPos{colStart - gameBoard.begin()};
-                    auto rowPos{rowStart - (*colStart).begin()};
-
-                    sf::CircleShape piece(pieceRadius);
-                    piece.setPosition(padding + (rowPos * 2 * pieceRadius) + (rowPos * padding * 2),
-                                      padding + (colPos * 2 * pieceRadius) + (colPos * padding * 2));
-
-                    if (*rowStart == 1)
-                    {
-                        piece.setFillColor(sf::Color::Red);
-                    }
-                    else
-                    {
-                        piece.setFillColor(sf::Color::Yellow);
-                    }
-
-                    window.draw(piece);
+                    piece.setFillColor(sf::Color::Red);
                 }
+                else if (*rowStart == -1)
+                {
+                    piece.setFillColor(sf::Color::Yellow);
+                }
+                else
+                {
+                    piece.setFillColor(sf::Color::Black);
+                }
+
+                window.draw(piece);
 
                 rowStart++;
             }
 
             colStart++;
         }
-
-        // if (drawNewPiece)
-        // {
-        //     sf::CircleShape piece(pieceRadius);
-        //     piece.setPosition(padding + (mouseCol * 2 * pieceRadius) + (mouseCol * padding * 2), padding);
-        //     piece.setFillColor(sf::Color::Red);
-        //     window.draw(piece);
-        //     drawNewPiece = false;
-        // }
 
         // end the current frame
         window.display();
