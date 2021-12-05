@@ -1,22 +1,9 @@
 #include <SFML/Graphics.hpp>
 
-#include "board.hpp"
+#include "game.hpp"
 #include <iostream>
 
 int main() {
-    // set up constants for drawing
-    const auto numCols{7};
-    const auto numRows{6};
-    const auto padding{20}; // half the amount of space in between circles on the board
-    const auto pieceRadius{50};
-    const auto width{(2 * pieceRadius * numCols) + (2 * numCols * padding)};  // allows for evenly spaced circles across the board
-    const auto height{(2 * pieceRadius * numRows) + (2 * numRows * padding)}; // allows for evenly spaced circles top to bottom
-
-    // for keeping track of where the mouse is on the screen (which column)
-    auto mouseCol{0};
-
-    int winner{0};
-
     sf::Font font;
     if (!font.loadFromFile("coolvetica rg.otf")) {
         std::cerr << "Could not load font"
@@ -24,10 +11,10 @@ int main() {
         exit(1);
     }
 
-    board board{};
+    game game;
 
     // open the window
-    sf::RenderWindow window(sf::VideoMode(width, height), "Connect 4!");
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Connect 4!");
 
     // run the program as long as the window is open
     while (window.isOpen()) {
@@ -42,93 +29,17 @@ int main() {
                 window.close();
                 break;
             case sf::Event::MouseMoved:
-                mouseCol = event.mouseMove.x * numCols / width;
+                game.setSelectedCol(event.mouseMove.x * NUM_COLS / WIDTH);
                 break;
             case sf::Event::MouseButtonPressed:
-                // place piece on left click (if game not over)
-                if (event.mouseButton.button == sf::Mouse::Left && winner == 0) {
-                    board.insert(mouseCol);
-
-                    // check if the user has won after placing a piece
-                    winner = board.checkForWin();
-                }
+                if (event.mouseButton.button == sf::Mouse::Left && !game.isDone()) game.addPiece();
                 break;
             default:
                 break;
             }
         }
 
-        /*
-         * drawing
-         */
-        // clear the window with blue color
-        window.clear(sf::Color::Blue);
-
-        // draw the board
-        auto gameBoard{board.getBoard()};
-
-        auto colStart{gameBoard.begin()};
-        auto colEnd{gameBoard.end()};
-
-        while (colStart < colEnd) {
-            auto rowStart{(*colStart).begin()};
-            auto rowEnd{(*colStart).end()};
-
-            while (rowStart < rowEnd) {
-                auto colPos{colStart - gameBoard.begin()};
-                auto rowPos{rowStart - (*colStart).begin()};
-
-                sf::CircleShape piece(pieceRadius);
-                piece.setPosition(padding + (rowPos * 2 * pieceRadius) + (rowPos * padding * 2),
-                                  padding + (colPos * 2 * pieceRadius) + (colPos * padding * 2));
-
-                if (*rowStart == 1) {
-                    piece.setFillColor(sf::Color::Red);
-                } else if (*rowStart == -1) {
-                    piece.setFillColor(sf::Color::Yellow);
-                } else {
-                    piece.setFillColor(sf::Color::Black);
-                }
-
-                window.draw(piece);
-
-                rowStart++;
-            }
-
-            colStart++;
-        }
-
-        // draw the victory/end message
-        if (winner != 0 || board.isFull()) {
-            sf::RectangleShape winBox(sf::Vector2f(width * 2 / 3, height * 1 / 3));
-            winBox.setPosition(width / 6, height / 3);
-            winBox.setFillColor(sf::Color::Black);
-
-            sf::Text winText;
-            winText.setFont(font);
-
-            std::string winMessage;
-            if (winner == 1) {
-                winMessage = "Red wins!";
-            } else if (winner == -1) {
-                winMessage = "Yellow wins!";
-            } else {
-                winMessage = "Draw.";
-            }
-
-            winText.setString(winMessage);
-            winText.setCharacterSize(height / 7);
-            winText.setFillColor(winner == 1 ? sf::Color::Red : sf::Color::Yellow);
-
-            // center the win message
-            sf::FloatRect winTextBounds = winText.getLocalBounds();
-            winText.setOrigin(winTextBounds.left + winTextBounds.width / 2.f,
-                              winTextBounds.top + winTextBounds.height / 2.f);
-            winText.setPosition(sf::Vector2f(width / 2, height / 2));
-
-            window.draw(winBox);
-            window.draw(winText);
-        }
+        game.drawTo(window, font);
 
         // end the current frame
         window.display();

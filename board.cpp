@@ -7,8 +7,7 @@ board::board() : gameBoard{{{0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
-                            {0, 0, 0, 0, 0, 0, 0}}},
-                 turnNumber{1} {
+                            {0, 0, 0, 0, 0, 0, 0}}} {
 }
 
 board::~board() {
@@ -20,8 +19,7 @@ std::array<std::array<int, 7>, 6> board::getBoard() {
 
 // insert the specificed piece into the specified column
 // true inserts a red piece, false inserts a yellow piece
-void board::insert(int col) {
-    turnNumber++;
+void board::insert(int col, int turn) {
     auto colStart{gameBoard.begin()};
     auto colEnd{gameBoard.end() - 1};
 
@@ -119,7 +117,10 @@ int board::checkForWin() {
     return 0;
 }
 
-// returns true if the board has no empty spaces left
-bool board::isFull() {
-    return turnNumber == 43;
+void board::clear() {
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 7; j++) {
+            gameBoard[i][j] = 0;
+        }
+    }
 }
