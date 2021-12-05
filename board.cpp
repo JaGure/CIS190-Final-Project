@@ -1,12 +1,14 @@
 #include "board.hpp"
 #include <array>
+#include <iostream>
 
 board::board() : gameBoard{{{0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
                             {0, 0, 0, 0, 0, 0, 0},
-                            {0, 0, 0, 0, 0, 0, 0}}} {
+                            {0, 0, 0, 0, 0, 0, 0}}},
+                 turnNumber{1} {
 }
 
 board::~board() {
@@ -19,6 +21,7 @@ std::array<std::array<int, 7>, 6> board::getBoard() {
 // insert the specificed piece into the specified column
 // true inserts a red piece, false inserts a yellow piece
 void board::insert(int col) {
+    turnNumber++;
     auto colStart{gameBoard.begin()};
     auto colEnd{gameBoard.end() - 1};
 
@@ -66,9 +69,9 @@ int board::checkForWin() {
                 consecutive = 0;
             } else {
                 consecutive = gameBoard[row][col] == color ? consecutive + 1 : 1;
-                color = gameBoard[row][col];
                 if (consecutive == 4) return color;
             }
+            color = gameBoard[row][col];
         }
     }
 
@@ -82,9 +85,9 @@ int board::checkForWin() {
                 consecutive = 0;
             } else {
                 consecutive = gameBoard[row][col] == color ? consecutive + 1 : 1;
-                color = gameBoard[row][col];
                 if (consecutive == 4) return color;
             }
+            color = gameBoard[row][col];
         }
     }
 
@@ -114,4 +117,9 @@ int board::checkForWin() {
     }
 
     return 0;
+}
+
+// returns true if the board has no empty spaces left
+bool board::isFull() {
+    return turnNumber == 43;
 }

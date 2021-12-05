@@ -51,16 +51,6 @@ int main() {
 
                     // check if the user has won after placing a piece
                     winner = board.checkForWin();
-                    switch (winner) {
-                    case 1:
-                        std::cout << "red wins!\n";
-                        break;
-                    case -1:
-                        std::cout << "yellow wins!\n";
-                        break;
-                    default:
-                        break;
-                    }
                 }
                 break;
             default:
@@ -108,8 +98,8 @@ int main() {
             colStart++;
         }
 
-        // draw the victory message
-        if (winner != 0) {
+        // draw the victory/end message
+        if (winner != 0 || board.isFull()) {
             sf::RectangleShape winBox(sf::Vector2f(width * 2 / 3, height * 1 / 3));
             winBox.setPosition(width / 6, height / 3);
             winBox.setFillColor(sf::Color::Black);
@@ -117,8 +107,15 @@ int main() {
             sf::Text winText;
             winText.setFont(font);
 
-            std::string winMessage = (winner == 1 ? "Red" : "Yellow");
-            winMessage += " wins!";
+            std::string winMessage;
+            if (winner == 1) {
+                winMessage = "Red wins!";
+            } else if (winner == -1) {
+                winMessage = "Yellow wins!";
+            } else {
+                winMessage = "Draw.";
+            }
+
             winText.setString(winMessage);
             winText.setCharacterSize(height / 7);
             winText.setFillColor(winner == 1 ? sf::Color::Red : sf::Color::Yellow);
