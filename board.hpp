@@ -3,21 +3,21 @@
 
 #include <array>
 
+// header for 7 col x 6 row board
 class board
 {
 private:
-    std::array<std::array<int>> board;
+    std::array<std::array<int, 7>, 6> gameBoard;
 
 public:
     board();
-    board(const board &);
-    board(board &&);
 
     virtual ~board();
 
+    std::array<std::array<int, 7>, 6> getBoard();
     void insert(int, int);
     bool checkForWin();
     void reset();
-}
+};
 
 #endif
