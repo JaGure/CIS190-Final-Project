@@ -6,7 +6,6 @@
 #define NUM_COLS 7
 #define NUM_ROWS 6
 
-// header for 7 col x 6 row board
 class board
 {
 private:
