@@ -45,8 +45,7 @@ int main()
                 // place piece on left click
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    flip = !flip;
-                    board.insert(flip, mouseCol);
+                    board.insert(mouseCol);
                 }
                 break;
             default:

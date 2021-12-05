@@ -8,6 +8,7 @@ class board
 {
 private:
     std::array<std::array<int, 7>, 6> gameBoard; // 2D array of 1s,0s, & -1s. 1 = red piece, 0 = no piece, -1 = yellow piece
+    bool turn;                                   // true if red's turn, false if yellow's turn
 
 public:
     board();
@@ -15,7 +16,7 @@ public:
     virtual ~board();
 
     std::array<std::array<int, 7>, 6> getBoard();
-    void insert(bool, int);
+    void insert(int);
     bool checkForWin();
 };
 

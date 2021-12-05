@@ -21,7 +21,7 @@ std::array<std::array<int, 7>, 6> board::getBoard()
 
 // insert the specificed piece into the specified column
 // true inserts a red piece, false inserts a yellow piece
-void board::insert(bool piece, int col)
+void board::insert(int col)
 {
     auto colStart{gameBoard.begin()};
     auto colEnd{gameBoard.end() - 1};
@@ -48,7 +48,7 @@ void board::insert(bool piece, int col)
         // otherwise, go to the next row up
         if (*rowStart == 0)
         {
-            if (piece)
+            if (turn)
             {
                 *rowStart = 1;
             }
@@ -56,6 +56,7 @@ void board::insert(bool piece, int col)
             {
                 *rowStart = -1;
             }
+            turn = !turn;
             return;
         }
 
