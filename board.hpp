@@ -7,7 +7,7 @@
 class board
 {
 private:
-    std::array<std::array<int, 7>, 6> gameBoard;
+    std::array<std::array<int, 7>, 6> gameBoard; // 2D array of 1s,0s, & -1s. 1 = red piece, 0 = no piece, -1 = yellow piece
 
 public:
     board();

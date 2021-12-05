@@ -16,9 +16,6 @@ int main()
     // for keeping track of where the mouse is on the screen (which column)
     auto mouseCol{0};
 
-    // for handling the drawing of new piece
-    bool placePiece{false};
-
     board board{};
 
     // open the window
@@ -46,7 +43,7 @@ int main()
                 // place piece on left click
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    placePiece = true;
+                    // update game state
                 }
                 break;
             default:
@@ -74,8 +71,45 @@ int main()
         }
 
         // draw the current game state (pieces)
+        auto gameBoard{board.getBoard()};
 
-        board.getBoard();
+        auto colStart{gameBoard.begin()};
+        auto colEnd{gameBoard.end()};
+
+        while (colStart < colEnd)
+        {
+            auto rowStart{(*colStart).begin()};
+            auto rowEnd{(*colStart).end()};
+
+            while (rowStart < rowEnd)
+            {
+                if (*rowStart == 1 || *rowStart == -1)
+                {
+                    auto colPos{colStart - gameBoard.begin()};
+                    auto rowPos{rowStart - (*colStart).begin()};
+
+                    sf::CircleShape piece(pieceRadius);
+                    piece.setPosition(padding + (rowPos * 2 * pieceRadius) + (rowPos * padding * 2),
+                                      padding + (colPos * 2 * pieceRadius) + (colPos * padding * 2));
+
+                    if (*rowStart == 1)
+                    {
+                        piece.setFillColor(sf::Color::Red);
+                    }
+                    else
+                    {
+                        piece.setFillColor(sf::Color::Yellow);
+                    }
+
+                    window.draw(piece);
+                }
+
+                rowStart++;
+            }
+
+            colStart++;
+        }
+
         // if (drawNewPiece)
         // {
         //     sf::CircleShape piece(pieceRadius);
