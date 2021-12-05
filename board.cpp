@@ -69,13 +69,13 @@ void board::insert(int col, bool turn)
 // returns 1 if red has one, -1 if yellow has won, 0 otherwise
 int board::checkForWin()
 {
-    int color = 0;
-    int consecutive = 0;
+    int color{0};
+    int consecutive{0};
 
     // row win
-    for (int row = 0; row < NUM_ROWS; row++)
+    for (int row{0}; row < NUM_ROWS; row++)
     {
-        for (int col = 0; col < NUM_COLS; col++)
+        for (int col{0}; col < NUM_COLS; col++)
         {
             if (gameBoard[row][col] == 0)
             {
@@ -95,9 +95,9 @@ int board::checkForWin()
     consecutive = 0;
 
     // column win
-    for (int col = 0; col < NUM_COLS; col++)
+    for (int col{0}; col < NUM_COLS; col++)
     {
-        for (int row = 0; row < NUM_ROWS; row++)
+        for (int row{0}; row < NUM_ROWS; row++)
         {
             if (gameBoard[row][col] == 0)
             {
@@ -117,17 +117,17 @@ int board::checkForWin()
     consecutive = 0;
 
     // diagonal win
-    for (int row = 0; row < NUM_ROWS; row++)
+    for (int row{0}; row < NUM_ROWS; row++)
     {
-        for (int col = 0; col < NUM_COLS; col++)
+        for (int col{0}; col < NUM_COLS; col++)
         {
             color = gameBoard[row][col];
             if (color == 0)
                 continue;
             // down
             consecutive = 1;
-            int i = row + 1;
-            int j = col + 1;
+            int i{row + 1};
+            int j{col + 1};
             while (i < NUM_ROWS && j < NUM_COLS && gameBoard[i++][j++] == color)
             {
                 if (++consecutive == 4)
@@ -150,9 +150,9 @@ int board::checkForWin()
 
 void board::clear()
 {
-    for (int i = 0; i < NUM_ROWS; i++)
+    for (int i{0}; i < NUM_ROWS; i++)
     {
-        for (int j = 0; j < NUM_COLS; j++)
+        for (int j{0}; j < NUM_COLS; j++)
         {
             gameBoard[i][j] = 0;
         }
