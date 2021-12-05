@@ -15,9 +15,8 @@ public:
     virtual ~board();
 
     std::array<std::array<int, 7>, 6> getBoard();
-    void insert(int, int);
+    void insert(bool, int);
     bool checkForWin();
-    void reset();
 };
 
 #endif

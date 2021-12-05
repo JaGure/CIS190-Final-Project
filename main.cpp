@@ -43,7 +43,7 @@ int main()
                 // place piece on left click
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    // update game state
+                    board.insert(true, mouseCol);
                 }
                 break;
             default:
