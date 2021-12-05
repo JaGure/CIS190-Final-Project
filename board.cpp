@@ -15,7 +15,7 @@ board::~board()
 {
 }
 
-std::array<std::array<int, 7>, 6> board::getBoard()
+std::array<std::array<int, NUM_COLS>, NUM_ROWS> board::getBoard()
 {
     return gameBoard;
 }
@@ -73,9 +73,9 @@ int board::checkForWin()
     int consecutive = 0;
 
     // row win
-    for (int row = 0; row < 6; row++)
+    for (int row = 0; row < NUM_ROWS; row++)
     {
-        for (int col = 0; col < 7; col++)
+        for (int col = 0; col < NUM_COLS; col++)
         {
             if (gameBoard[row][col] == 0)
             {
@@ -95,9 +95,9 @@ int board::checkForWin()
     consecutive = 0;
 
     // column win
-    for (int col = 0; col < 7; col++)
+    for (int col = 0; col < NUM_COLS; col++)
     {
-        for (int row = 0; row < 6; row++)
+        for (int row = 0; row < NUM_ROWS; row++)
         {
             if (gameBoard[row][col] == 0)
             {
@@ -117,9 +117,9 @@ int board::checkForWin()
     consecutive = 0;
 
     // diagonal win
-    for (int row = 0; row < 6; row++)
+    for (int row = 0; row < NUM_ROWS; row++)
     {
-        for (int col = 0; col < 7; col++)
+        for (int col = 0; col < NUM_COLS; col++)
         {
             color = gameBoard[row][col];
             if (color == 0)
@@ -128,7 +128,7 @@ int board::checkForWin()
             consecutive = 1;
             int i = row + 1;
             int j = col + 1;
-            while (i < 6 && j < 7 && gameBoard[i++][j++] == color)
+            while (i < NUM_ROWS && j < NUM_COLS && gameBoard[i++][j++] == color)
             {
                 if (++consecutive == 4)
                     return color;
@@ -137,7 +137,7 @@ int board::checkForWin()
             consecutive = 1;
             i = row + 1;
             j = col - 1;
-            while (i < 6 && j >= 0 && gameBoard[i++][j--] == color)
+            while (i < NUM_ROWS && j >= 0 && gameBoard[i++][j--] == color)
             {
                 if (++consecutive == 4)
                     return color;
@@ -150,9 +150,9 @@ int board::checkForWin()
 
 void board::clear()
 {
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < NUM_ROWS; i++)
     {
-        for (int j = 0; j < 7; j++)
+        for (int j = 0; j < NUM_COLS; j++)
         {
             gameBoard[i][j] = 0;
         }
