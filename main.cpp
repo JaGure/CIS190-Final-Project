@@ -34,6 +34,10 @@ int main() {
             case sf::Event::MouseButtonPressed:
                 if (event.mouseButton.button == sf::Mouse::Left && !game.isDone()) game.addPiece();
                 break;
+            case sf::Event::KeyPressed:
+                if (event.key.code == sf::Keyboard::R) {
+                    game.reset();
+                }
             default:
                 break;
             }

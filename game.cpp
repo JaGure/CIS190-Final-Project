@@ -19,6 +19,7 @@ void game::reset() {
     board.clear();
     turn = true;
     turnNumber = 1;
+    winner = 0;
 }
 
 void game::setSelectedCol(int selectedCol) {
