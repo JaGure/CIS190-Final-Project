@@ -1,7 +1,19 @@
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <signal.h>
+
+sf::TcpSocket player1;
+sf::TcpSocket player2;
+
+// graceful cleanup.
+void sigint_handler(int signal) {
+    player1.disconnect();
+    player2.disconnect();
+    exit(0);
+}
 
 int main() {
+    signal(SIGINT, sigint_handler);
     sf::TcpListener listener;
     int data[2];
     std::size_t received;
@@ -14,8 +26,7 @@ int main() {
     std::cout << "bound listener to port 53000\n";
 
     // accept a new connection
-    sf::TcpSocket player1;
-    sf::TcpSocket player2;
+
     if (listener.accept(player1) != sf::Socket::Done) {
         std::cout << "client acception error\n";
     }
@@ -25,6 +36,8 @@ int main() {
     if (listener.accept(player2) != sf::Socket::Done) {
         std::cout << "client acception error\n";
     }
+
+    listener.close();
 
     std::cout << "player2 connected\n";
 

@@ -4,7 +4,11 @@
 #include "game.hpp"
 #include <iostream>
 
-int main() {
+int main(int argc, char **argv) {
+
+    const char *IP_ADDR = argc > 1 ? argv[1] : "127.0.0.1";
+    std::cout << "expects host at: " << IP_ADDR << std::endl;
+
     sf::TcpSocket socket;
     std::size_t received;
     int data[2];
@@ -87,7 +91,7 @@ int main() {
                     if (!game.hasStarted()) {
                         game.start(true);
                         if (!socketOpen) {
-                            if (socket.connect("127.0.0.1", 53000) != sf::Socket::Done) {
+                            if (socket.connect(IP_ADDR, 53000) != sf::Socket::Done) {
                                 std::cout << "socket connection error\n";
                             }
                             socket.setBlocking(false);
