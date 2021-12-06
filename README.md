@@ -23,12 +23,12 @@ We plan on making a multiplayer connect 4 game. The project will have multiple d
 
 ## C++ Features
 
-- Pieces will be stored by the board in a collection (likely a vector) and accessed via iterators.
-- We anticipate using unique pointers as well in order to better manage our instantiated classes (relative to using raw pointers).
+- Pieces are stored by the board in a container (2D array) and accessed via iterators.
+- We used unique pointers as well in order to better manage our instantiated classes (relative to using raw pointers).
 
 ## Project Structure
 
-We anticipate writing several classes in order to manage state in our game (e.g., `Piece`, `Board`, `User/Player` - for networking). These will all be independent; there will likely not be a class hierarchy.
+The `Board` class manages the board interally. The `Game` class uses the `Board` class to run the game. The `Piece` class is used for drawing pieces (including piece physics). The `Main` class runs the game by launching a game client. Finally, the `Server` class launches a server which facilitates communciation between two clients.
 
 ## Time & Work Divide
 
