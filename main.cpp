@@ -7,14 +7,8 @@
 int main() {
     sf::TcpSocket socket;
     std::size_t received;
-    int *data = new int;
-    sf::Socket::Status status = socket.connect("127.0.0.1", 53000);
-    if (status != sf::Socket::Done) {
-        std::cout << "socket connection error\n";
-    }
-    socket.setBlocking(false);
-
-    std::cout << "socket connected\n";
+    int data[2];
+    bool socketOpen = false;
     sf::Font font;
     if (!font.loadFromFile("coolvetica rg.otf")) {
         std::cerr << "Could not load font"
@@ -32,10 +26,16 @@ int main() {
     while (window.isOpen()) {
 
         // Handle recieves on this socket.
-        if (game.hasStarted() && socket.receive(data, sizeof(int), received) == sf::Socket::Done) {
-            std::cout << "got column " << *data << " from server\n";
-            game.setSelectedCol(*data);
-            game.addPiece();
+        if (game.hasStarted() && socketOpen && socket.receive(data, sizeof(int) * 2, received) == sf::Socket::Done) {
+            switch (data[0]) {
+            case 0: // 0 denotes inserting a piece command
+                game.setSelectedCol(data[1]);
+                game.addPiece();
+                break;
+            case 1: // 1 denotes reseting the game.
+                game.reset();
+                break;
+            }
         }
 
         /*
@@ -47,6 +47,7 @@ int main() {
             switch (event.type) {
             case sf::Event::Closed:
                 window.close();
+                if (socketOpen) socket.disconnect();
                 break;
             case sf::Event::MouseMoved:
                 if (game.hasStarted())
@@ -55,13 +56,14 @@ int main() {
             case sf::Event::MouseButtonPressed:
                 if (botTimer == 0 && event.mouseButton.button == sf::Mouse::Left && !game.isDone() && game.hasStarted()) {
                     game.addPiece();
-                    *data = game.getSelectedCol();
-                    if (socket.send(data, sizeof(int)) != sf::Socket::Done) {
-                        std::cout << "error sending data\n";
-                    };
-                    // do bot move.
-                    if (!game.isDone() && game.vsBot()) {
+                    if (game.vsBot() && !game.isDone()) {
                         botTimer = 500;
+                    } else if (!game.vsBot()) {
+                        data[0] = 0;
+                        data[1] = game.getSelectedCol();
+                        if (socket.send(data, sizeof(int) * 2) != sf::Socket::Done) {
+                            std::cout << "error sending data\n";
+                        };
                     }
                 }
 
@@ -70,14 +72,29 @@ int main() {
                 switch (event.key.code) {
                 case sf::Keyboard::R:
                     game.reset();
+                    if (!game.vsBot()) {
+                        data[0] = 1;
+                        if (socket.send(data, sizeof(int) * 2) != sf::Socket::Done) {
+                            std::cout << "error sending data\n";
+                        };
+                    }
                     break;
                 case sf::Keyboard::Num1:
                     if (!game.hasStarted())
                         game.start(false);
                     break;
                 case sf::Keyboard::Num2:
-                    if (!game.hasStarted())
+                    if (!game.hasStarted()) {
                         game.start(true);
+                        if (!socketOpen) {
+                            if (socket.connect("127.0.0.1", 53000) != sf::Socket::Done) {
+                                std::cout << "socket connection error\n";
+                            }
+                            socket.setBlocking(false);
+                            socketOpen = true;
+                        }
+                    }
+
                     break;
                 default:
                     break;

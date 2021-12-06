@@ -3,7 +3,7 @@
 
 int main() {
     sf::TcpListener listener;
-    int *data = new int;
+    int data[2];
     std::size_t received;
 
     // bind the listener to a port
@@ -30,23 +30,23 @@ int main() {
 
     while (1) {
 
-        if (player1.receive(data, sizeof(int), received) != sf::Socket::Done) {
+        if (player1.receive(data, sizeof(int) * 2, received) != sf::Socket::Done) {
             std::cout << "error recieving data from player1\n";
         } else {
-            std::cout << "got column " << *data << " from player1\n";
+            std::cout << "got column " << data[1] << " from player1\n";
         }
 
-        if (player2.send(data, sizeof(int)) != sf::Socket::Done) {
+        if (player2.send(data, sizeof(int) * 2) != sf::Socket::Done) {
             std::cout << "error sending data to player2\n";
         };
 
-        if (player2.receive(data, sizeof(int), received) != sf::Socket::Done) {
+        if (player2.receive(data, sizeof(int) * 2, received) != sf::Socket::Done) {
             std::cout << "error recieving data from player2\n";
         } else {
-            std::cout << "got column " << *data << " from player2\n";
+            std::cout << "got column " << data[1] << " from player2\n";
         }
 
-        if (player1.send(data, sizeof(int)) != sf::Socket::Done) {
+        if (player1.send(data, sizeof(int) * 2) != sf::Socket::Done) {
             std::cout << "error sending data to player1\n";
         };
     }

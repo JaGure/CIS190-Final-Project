@@ -4,7 +4,7 @@ bool piece::floor = true;
 
 piece::piece(int color, int x) : sf::CircleShape(PIECE_RADIUS), vy{0.f} {
     this->setPosition(x, 0);
-    this->setFillColor(color == 1 ? sf::Color::Red : sf::Color::Yellow);
+    this->setFillColor(color == 1 ? sf::Color(0xeb4034FF) : sf::Color(0xebdc34FF));
     this->stopped = false;
 }
 

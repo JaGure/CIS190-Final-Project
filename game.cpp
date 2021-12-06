@@ -210,7 +210,6 @@ void game::reset() {
     turnNumber = 1;
     winner = 0;
     selectedCol = -1;
-    started = false;
     pieces.clear();
 }
 
@@ -230,7 +229,7 @@ void game::tick() {
 
 void game::drawTo(sf::RenderWindow &window, sf::Font &font) {
     // clear the window with blue color
-    window.clear(sf::Color::Blue);
+    window.clear(sf::Color(0x3459ebff));
 
     // draw the board
     auto gameBoard{board.getBoard()};
@@ -249,7 +248,7 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font) {
             piece.setPosition(PADDING + (rowPos * 2 * PIECE_RADIUS) + (rowPos * PADDING * 2),
                               PADDING + (colPos * 2 * PIECE_RADIUS) + (colPos * PADDING * 2));
 
-            piece.setFillColor((!isDone() && rowPos == selectedCol) ? sf::Color::Green : sf::Color::Black);
+            piece.setFillColor((!isDone() && rowPos == selectedCol) ? sf::Color(0x333435ff) : sf::Color(0x202121ff));
             window.draw(piece);
 
             rowStart++;
@@ -262,19 +261,19 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font) {
     if (!started) {
         sf::RectangleShape messageBox(sf::Vector2f(WIDTH * 2 / 3, HEIGHT * 2 / 3));
         messageBox.setPosition(WIDTH / 6, HEIGHT / 6);
-        messageBox.setFillColor(sf::Color::Black);
+        messageBox.setFillColor(sf::Color(0x202121ff));
 
         sf::Text startHeader;
         startHeader.setFont(font);
         startHeader.setString("Connect 4");
         startHeader.setCharacterSize(HEIGHT / NUM_COLS);
-        startHeader.setFillColor(sf::Color::Blue);
+        startHeader.setFillColor(sf::Color(0x3459ebff));
 
         sf::Text message;
         message.setFont(font);
         message.setString("Press 1 for 1P, 2 for 2P");
         message.setCharacterSize(HEIGHT / NUM_COLS / 2);
-        message.setFillColor(sf::Color::Blue);
+        message.setFillColor(sf::Color(0x3459ebff));
 
         // center the messages
         sf::FloatRect headerBounds = startHeader.getLocalBounds();
@@ -300,7 +299,7 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font) {
     if (isDone()) {
         sf::RectangleShape winBox(sf::Vector2f(WIDTH * 2 / 3, HEIGHT * 1 / 3));
         winBox.setPosition(WIDTH / NUM_ROWS, HEIGHT / 3);
-        winBox.setFillColor(sf::Color::Black);
+        winBox.setFillColor(sf::Color(0x202121ff));
 
         sf::Text winText;
         winText.setFont(font);
