@@ -10,6 +10,7 @@ class piece : public sf::CircleShape {
     float vy;
 
   public:
+    bool stopped;
     static bool floor;
     piece(int color, int x);
     virtual ~piece();
