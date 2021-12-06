@@ -34,17 +34,31 @@ int main()
                 window.close();
                 break;
             case sf::Event::MouseMoved:
-                game.setSelectedCol(event.mouseMove.x * NUM_COLS / WIDTH);
+                if (game.hasStarted())
+                    game.setSelectedCol(event.mouseMove.x * NUM_COLS / WIDTH);
                 break;
             case sf::Event::MouseButtonPressed:
-                if (event.mouseButton.button == sf::Mouse::Left && !game.isDone())
+                if (event.mouseButton.button == sf::Mouse::Left && !game.isDone() && game.hasStarted())
                     game.addPiece();
                 break;
             case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::R)
+                switch (event.key.code)
                 {
+                case sf::Keyboard::R:
                     game.reset();
+                    break;
+                case sf::Keyboard::Num1:
+                    if (!game.hasStarted())
+                        game.start(false);
+                    break;
+                case sf::Keyboard::Num2:
+                    if (!game.hasStarted())
+                        game.start(true);
+                    break;
+                default:
+                    break;
                 }
+                break;
             default:
                 break;
             }
