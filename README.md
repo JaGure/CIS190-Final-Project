@@ -19,10 +19,7 @@ We plan on making a multiplayer connect 4 game. The project will have multiple d
 
 ## External Libs
 
-This may change depending on our needs but for now the plan is to use:
-
-- Boost.Asio - a networking library
-- SFML (for graphics)
+- SFML (for graphics and networking)
 
 ## C++ Features
 

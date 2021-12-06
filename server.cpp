@@ -6,20 +6,23 @@ sf::TcpSocket player1;
 sf::TcpSocket player2;
 
 // graceful cleanup.
-void sigint_handler(int signal) {
+void sigint_handler(int signal)
+{
     player1.disconnect();
     player2.disconnect();
     exit(0);
 }
 
-int main() {
+int main()
+{
     signal(SIGINT, sigint_handler);
     sf::TcpListener listener;
     int data[2];
     std::size_t received;
 
     // bind the listener to a port
-    if (listener.listen(53000) != sf::Socket::Done) {
+    if (listener.listen(53000) != sf::Socket::Done)
+    {
         std::cout << "listener error\n";
     }
 
@@ -27,13 +30,15 @@ int main() {
 
     // accept a new connection
 
-    if (listener.accept(player1) != sf::Socket::Done) {
+    if (listener.accept(player1) != sf::Socket::Done)
+    {
         std::cout << "client acception error\n";
     }
 
     std::cout << "player1 connected\n";
 
-    if (listener.accept(player2) != sf::Socket::Done) {
+    if (listener.accept(player2) != sf::Socket::Done)
+    {
         std::cout << "client acception error\n";
     }
 
@@ -41,25 +46,35 @@ int main() {
 
     std::cout << "player2 connected\n";
 
-    while (1) {
+    // marshal data between the two clients
+    while (1)
+    {
 
-        if (player1.receive(data, sizeof(int) * 2, received) != sf::Socket::Done) {
+        if (player1.receive(data, sizeof(int) * 2, received) != sf::Socket::Done)
+        {
             std::cout << "error recieving data from player1\n";
-        } else {
+        }
+        else
+        {
             std::cout << "got column " << data[1] << " from player1\n";
         }
 
-        if (player2.send(data, sizeof(int) * 2) != sf::Socket::Done) {
+        if (player2.send(data, sizeof(int) * 2) != sf::Socket::Done)
+        {
             std::cout << "error sending data to player2\n";
         };
 
-        if (player2.receive(data, sizeof(int) * 2, received) != sf::Socket::Done) {
+        if (player2.receive(data, sizeof(int) * 2, received) != sf::Socket::Done)
+        {
             std::cout << "error recieving data from player2\n";
-        } else {
+        }
+        else
+        {
             std::cout << "got column " << data[1] << " from player2\n";
         }
 
-        if (player1.send(data, sizeof(int) * 2) != sf::Socket::Done) {
+        if (player1.send(data, sizeof(int) * 2) != sf::Socket::Done)
+        {
             std::cout << "error sending data to player1\n";
         };
     }

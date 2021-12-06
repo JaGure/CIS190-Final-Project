@@ -4,8 +4,10 @@
 #include "game.hpp"
 #include <iostream>
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
+    // for loading the game client
     const char *IP_ADDR = argc > 1 ? argv[1] : "127.0.0.1";
     std::cout << "expects host at: " << IP_ADDR << std::endl;
 
@@ -13,13 +15,17 @@ int main(int argc, char **argv) {
     std::size_t received;
     int data[2];
     bool socketOpen = false;
+
+    // load in the font
     sf::Font font;
-    if (!font.loadFromFile("coolvetica rg.otf")) {
+    if (!font.loadFromFile("coolvetica rg.otf"))
+    {
         std::cerr << "Could not load font"
                   << "\n";
         exit(1);
     }
 
+    // initialize the game
     game game{};
     int botTimer = 0;
 
@@ -27,11 +33,14 @@ int main(int argc, char **argv) {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Connect 4!");
 
     // run the program as long as the window is open
-    while (window.isOpen()) {
+    while (window.isOpen())
+    {
 
         // Handle recieves on this socket.
-        if (game.hasStarted() && socketOpen && socket.receive(data, sizeof(int) * 2, received) == sf::Socket::Done) {
-            switch (data[0]) {
+        if (game.hasStarted() && socketOpen && socket.receive(data, sizeof(int) * 2, received) == sf::Socket::Done)
+        {
+            switch (data[0])
+            {
             case 0: // 0 denotes inserting a piece command
                 game.setSelectedCol(data[1]);
                 game.addPiece();
@@ -43,29 +52,38 @@ int main(int argc, char **argv) {
         }
 
         /*
-         * event handling
+         * event handling (within this window)
          */
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
-        while (window.pollEvent(event)) {
-            switch (event.type) {
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
             case sf::Event::Closed:
                 window.close();
-                if (socketOpen) socket.disconnect();
+                if (socketOpen)
+                    socket.disconnect();
                 break;
             case sf::Event::MouseMoved:
                 if (game.hasStarted())
                     game.setSelectedCol(event.mouseMove.x * NUM_COLS / WIDTH);
                 break;
             case sf::Event::MouseButtonPressed:
-                if (botTimer == 0 && event.mouseButton.button == sf::Mouse::Left && !game.isDone() && game.hasStarted()) {
+                if (botTimer == 0 && event.mouseButton.button == sf::Mouse::Left && !game.isDone() && game.hasStarted())
+                {
                     game.addPiece();
-                    if (game.vsBot() && !game.isDone()) {
+                    if (game.vsBot())
+                    {
+                        // for adding the bot's piece (below)
                         botTimer = 500;
-                    } else if (!game.vsBot()) {
+                    }
+                    else
+                    {
                         data[0] = 0;
                         data[1] = game.getSelectedCol();
-                        if (socket.send(data, sizeof(int) * 2) != sf::Socket::Done) {
+                        if (socket.send(data, sizeof(int) * 2) != sf::Socket::Done)
+                        {
                             std::cout << "error sending data\n";
                         };
                     }
@@ -73,12 +91,15 @@ int main(int argc, char **argv) {
 
                 break;
             case sf::Event::KeyPressed:
-                switch (event.key.code) {
+                switch (event.key.code)
+                {
                 case sf::Keyboard::R:
                     game.reset();
-                    if (!game.vsBot()) {
+                    if (!game.vsBot())
+                    {
                         data[0] = 1;
-                        if (socket.send(data, sizeof(int) * 2) != sf::Socket::Done) {
+                        if (socket.send(data, sizeof(int) * 2) != sf::Socket::Done)
+                        {
                             std::cout << "error sending data\n";
                         };
                     }
@@ -88,10 +109,13 @@ int main(int argc, char **argv) {
                         game.start(false);
                     break;
                 case sf::Keyboard::Num2:
-                    if (!game.hasStarted()) {
+                    if (!game.hasStarted())
+                    {
                         game.start(true);
-                        if (!socketOpen) {
-                            if (socket.connect(IP_ADDR, 53000) != sf::Socket::Done) {
+                        if (!socketOpen)
+                        {
+                            if (socket.connect(IP_ADDR, 53000) != sf::Socket::Done)
+                            {
                                 std::cout << "socket connection error\n";
                             }
                             socket.setBlocking(false);
@@ -111,9 +135,11 @@ int main(int argc, char **argv) {
 
         game.drawTo(window, font);
         game.tick();
-        if (botTimer > 0) {
+        if (botTimer > 0)
+        {
             botTimer--;
-            if (botTimer == 0) {
+            if (botTimer == 0)
+            {
                 game.addPiece();
             }
         }
