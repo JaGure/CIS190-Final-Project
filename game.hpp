@@ -31,6 +31,7 @@ class game {
     bool isDone();
     void reset();
     void setSelectedCol(int);
+    int getSelectedCol();
     void drawTo(sf::RenderWindow &, sf::Font &);
     void tick();
 };

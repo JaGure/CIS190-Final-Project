@@ -218,6 +218,10 @@ void game::setSelectedCol(int selectedCol) {
     this->selectedCol = selectedCol;
 }
 
+int game::getSelectedCol() {
+    return this->selectedCol;
+}
+
 void game::tick() {
     for (std::unique_ptr<piece> &piece_ptr : pieces) {
         piece_ptr->updatePhysics(pieces);

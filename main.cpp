@@ -1,9 +1,20 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 #include "game.hpp"
 #include <iostream>
 
 int main() {
+    sf::TcpSocket socket;
+    std::size_t received;
+    int *data = new int;
+    sf::Socket::Status status = socket.connect("127.0.0.1", 53000);
+    if (status != sf::Socket::Done) {
+        std::cout << "socket connection error\n";
+    }
+    socket.setBlocking(false);
+
+    std::cout << "socket connected\n";
     sf::Font font;
     if (!font.loadFromFile("coolvetica rg.otf")) {
         std::cerr << "Could not load font"
@@ -19,6 +30,14 @@ int main() {
 
     // run the program as long as the window is open
     while (window.isOpen()) {
+
+        // Handle recieves on this socket.
+        if (game.hasStarted() && socket.receive(data, sizeof(int), received) == sf::Socket::Done) {
+            std::cout << "got column " << *data << " from server\n";
+            game.setSelectedCol(*data);
+            game.addPiece();
+        }
+
         /*
          * event handling
          */
@@ -36,6 +55,10 @@ int main() {
             case sf::Event::MouseButtonPressed:
                 if (botTimer == 0 && event.mouseButton.button == sf::Mouse::Left && !game.isDone() && game.hasStarted()) {
                     game.addPiece();
+                    *data = game.getSelectedCol();
+                    if (socket.send(data, sizeof(int)) != sf::Socket::Done) {
+                        std::cout << "error sending data\n";
+                    };
                     // do bot move.
                     if (!game.isDone() && game.vsBot()) {
                         botTimer = 500;
@@ -77,6 +100,5 @@ int main() {
         // end the current frame
         window.display();
     }
-
     return 0;
 }

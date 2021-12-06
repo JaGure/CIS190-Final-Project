@@ -6,6 +6,9 @@ a.out: main.cpp board.hpp board.cpp game.hpp game.cpp
 works: main.cpp board.hpp board.cpp game.hpp game.cpp piece.hpp piece.cpp consts.hpp
 	clang++ -std=c++2a main.cpp board.cpp game.cpp piece.cpp -I/usr/local/include -L/usr/local/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network
 
+server: server.cpp
+	clang++ -std=c++2a server.cpp -I/usr/local/include -L/usr/local/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -o b.out
+
 test: a.out
 	./a.out
 
