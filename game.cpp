@@ -5,29 +5,31 @@ game::game() : board(), turn{true}, turnNumber{1}, winner{0}, selectedCol{-1}, s
 
 game::~game() {}
 
-bool game::hasStarted()
-{
+bool game::hasStarted() {
     return started;
 }
 
-void game::start(bool gameType)
-{
+void game::start(bool gameType) {
     started = true;
     this->gameType = gameType;
 }
 
 // in a two player game, just adds the piece in the selected column
 // in a one player game, adds the piece in the selected column, followed by a bot piece
-void game::addPiece()
-{
+void game::addPiece() {
     board.insert(selectedCol, turn);
+    pieces.push_back(std::make_unique<piece>(turn, PADDING + (selectedCol * 2 * PIECE_RADIUS) + (selectedCol * PADDING * 2)));
+    for (std::unique_ptr<piece> &piece_ptr : pieces) {
+        std::cout << piece_ptr.get() << " pos: " << piece_ptr->getPosition().x << " " << piece_ptr->getPosition().y << ", ";
+    }
+    std::cout << std::endl;
+
     turn = !turn;
     turnNumber++;
     winner = board.checkForWin();
 
     // also add the bot piece (if 1p and if the above did not end the game)
-    if (!gameType && winner == 0)
-    {
+    if (!gameType && winner == 0) {
         board.insert(generateBotMove(), turn);
         turn = !turn;
         turnNumber++;
@@ -35,8 +37,7 @@ void game::addPiece()
     }
 }
 
-int game::generateBotMove()
-{
+int game::generateBotMove() {
     auto gameBoard{board.getBoard()};
 
     // Prevent red from winning
@@ -52,17 +53,13 @@ int game::generateBotMove()
     // if can't win, figure out where can play
     std::array<int, NUM_COLS>
         topsOfColumns{};
-    for (auto i{0}; i < NUM_COLS; i++)
-    {
+    for (auto i{0}; i < NUM_COLS; i++) {
         topsOfColumns[i] = -1;
     }
 
-    for (auto i{0}; i < NUM_COLS; i++)
-    {
-        for (auto j{NUM_ROWS - 1}; j >= 0; j--)
-        {
-            if (gameBoard[j][i] == 0 && topsOfColumns[i] == -1)
-            {
+    for (auto i{0}; i < NUM_COLS; i++) {
+        for (auto j{NUM_ROWS - 1}; j >= 0; j--) {
+            if (gameBoard[j][i] == 0 && topsOfColumns[i] == -1) {
                 topsOfColumns[i] = j;
             }
         }
@@ -70,14 +67,12 @@ int game::generateBotMove()
 
     // try and play as close to as many other reds as possible
     std::array<int, NUM_COLS> numReds{};
-    for (auto i{0}; i < NUM_COLS; i++)
-    {
+    for (auto i{0}; i < NUM_COLS; i++) {
         auto colTop{topsOfColumns[i]};
         numReds[i] = 0;
 
         // to the left of the piece
-        if (i > 0)
-        {
+        if (i > 0) {
             // top left
             if (colTop > 0 && gameBoard[colTop - 1][i - 1] == 1)
                 numReds[i]++;
@@ -96,8 +91,7 @@ int game::generateBotMove()
             numReds[i]++;
 
         // to the right
-        if (i < NUM_COLS - 1)
-        {
+        if (i < NUM_COLS - 1) {
             // top right
             if (colTop > 0 && gameBoard[colTop - 1][i + 1] == 1)
                 numReds[i]++;
@@ -115,10 +109,8 @@ int game::generateBotMove()
     int max{numReds[0]};
     int maxPos{0};
 
-    for (auto i{0}; i < NUM_COLS; i++)
-    {
-        if (numReds[i] > max)
-        {
+    for (auto i{0}; i < NUM_COLS; i++) {
+        if (numReds[i] > max) {
             max = numReds[i];
             maxPos = i;
         }
@@ -127,26 +119,19 @@ int game::generateBotMove()
     return maxPos;
 }
 
-int game::canWin(bool piece)
-{
+int game::canWin(bool piece) {
     auto gameBoard{board.getBoard()};
     int consecutive{0};
     auto color{piece ? 1 : -1};
 
     // check close to row win
-    for (int row{0}; row < NUM_ROWS; row++)
-    {
-        for (int col{0}; col < NUM_COLS; col++)
-        {
-            if (gameBoard[row][col] != color)
-            {
+    for (int row{0}; row < NUM_ROWS; row++) {
+        for (int col{0}; col < NUM_COLS; col++) {
+            if (gameBoard[row][col] != color) {
                 consecutive = 0;
-            }
-            else
-            {
+            } else {
                 consecutive++;
-                if (consecutive == 3)
-                {
+                if (consecutive == 3) {
                     // if can place piece to left of row
                     if (col > 2 && gameBoard[row][col - 3] == 0 && (row == NUM_ROWS - 1 || gameBoard[row + 1][col - 3] != 0))
                         return col - 3;
@@ -162,16 +147,11 @@ int game::canWin(bool piece)
     consecutive = 0;
 
     // check for close to column win
-    for (int col{0}; col < NUM_COLS; col++)
-    {
-        for (int row{0}; row < NUM_ROWS; row++)
-        {
-            if (gameBoard[row][col] != color)
-            {
+    for (int col{0}; col < NUM_COLS; col++) {
+        for (int row{0}; row < NUM_ROWS; row++) {
+            if (gameBoard[row][col] != color) {
                 consecutive = 0;
-            }
-            else
-            {
+            } else {
                 consecutive++;
                 // if can place piece on top of column
                 if (consecutive == 3 && row > 2 && gameBoard[row - 3][col] == 0)
@@ -183,10 +163,8 @@ int game::canWin(bool piece)
     consecutive = 0;
 
     // check for close to diagonal win
-    for (int row{0}; row < NUM_ROWS; row++)
-    {
-        for (int col{0}; col < NUM_COLS; col++)
-        {
+    for (int row{0}; row < NUM_ROWS; row++) {
+        for (int col{0}; col < NUM_COLS; col++) {
             if (gameBoard[row][col] != color)
                 continue;
 
@@ -194,10 +172,8 @@ int game::canWin(bool piece)
             consecutive = 1;
             int i{row + 1};
             int j{col + 1};
-            while (i < NUM_ROWS && j < NUM_COLS && gameBoard[i++][j++] == color)
-            {
-                if (++consecutive == 3)
-                {
+            while (i < NUM_ROWS && j < NUM_COLS && gameBoard[i++][j++] == color) {
+                if (++consecutive == 3) {
                     // check if can place bottom right
                     if (j < NUM_COLS && i < NUM_ROWS && gameBoard[i][j] == 0 && (i == NUM_ROWS - 1 || gameBoard[i + 1][j] != 0))
                         return j;
@@ -213,10 +189,8 @@ int game::canWin(bool piece)
             consecutive = 1;
             i = row + 1;
             j = col - 1;
-            while (i < NUM_ROWS && j >= 0 && gameBoard[i++][j--] == color)
-            {
-                if (++consecutive == 3)
-                {
+            while (i < NUM_ROWS && j >= 0 && gameBoard[i++][j--] == color) {
+                if (++consecutive == 3) {
                     // check if can place bottom left
                     if (j >= 0 && i < NUM_ROWS && gameBoard[i][j] == 0 && (i == NUM_ROWS - 1 || gameBoard[i + 1][j] != 0))
                         return j;
@@ -234,28 +208,31 @@ int game::canWin(bool piece)
     return -1;
 }
 
-bool game::isDone()
-{
+bool game::isDone() {
     return turnNumber == 43 || winner != 0;
 }
 
-void game::reset()
-{
+void game::reset() {
     board.clear();
     turn = true;
     turnNumber = 1;
     winner = 0;
     selectedCol = -1;
     started = false;
+    pieces.clear();
 }
 
-void game::setSelectedCol(int selectedCol)
-{
+void game::setSelectedCol(int selectedCol) {
     this->selectedCol = selectedCol;
 }
 
-void game::drawTo(sf::RenderWindow &window, sf::Font &font)
-{
+void game::tick() {
+    for (std::unique_ptr<piece> &piece_ptr : pieces) {
+        piece_ptr->updatePhysics(pieces);
+    }
+}
+
+void game::drawTo(sf::RenderWindow &window, sf::Font &font) {
     // clear the window with blue color
     window.clear(sf::Color::Blue);
 
@@ -264,13 +241,11 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font)
 
     auto colStart{gameBoard.begin()};
     auto colEnd{gameBoard.end()};
-    while (colStart < colEnd)
-    {
+    while (colStart < colEnd) {
         auto rowStart{(*colStart).begin()};
         auto rowEnd{(*colStart).end()};
 
-        while (rowStart < rowEnd)
-        {
+        while (rowStart < rowEnd) {
             auto colPos{colStart - gameBoard.begin()};
             auto rowPos{rowStart - (*colStart).begin()};
 
@@ -278,19 +253,7 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font)
             piece.setPosition(PADDING + (rowPos * 2 * PIECE_RADIUS) + (rowPos * PADDING * 2),
                               PADDING + (colPos * 2 * PIECE_RADIUS) + (colPos * PADDING * 2));
 
-            if (*rowStart == 1)
-            {
-                piece.setFillColor(sf::Color::Red);
-            }
-            else if (*rowStart == -1)
-            {
-                piece.setFillColor(sf::Color::Yellow);
-            }
-            else
-            {
-                piece.setFillColor((!isDone() && rowPos == selectedCol) ? sf::Color::Green : sf::Color::Black);
-            }
-
+            piece.setFillColor((!isDone() && rowPos == selectedCol) ? sf::Color::Green : sf::Color::Black);
             window.draw(piece);
 
             rowStart++;
@@ -300,8 +263,7 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font)
     }
 
     // draw the start message
-    if (!started)
-    {
+    if (!started) {
         sf::RectangleShape messageBox(sf::Vector2f(WIDTH * 2 / 3, HEIGHT * 2 / 3));
         messageBox.setPosition(WIDTH / 6, HEIGHT / 6);
         messageBox.setFillColor(sf::Color::Black);
@@ -334,9 +296,12 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font)
         window.draw(message);
     }
 
+    for (std::unique_ptr<piece> &piece_ptr : pieces) {
+        piece_ptr->drawTo(window, font);
+    }
+
     // draw the victory/end message
-    if (isDone())
-    {
+    if (isDone()) {
         sf::RectangleShape winBox(sf::Vector2f(WIDTH * 2 / 3, HEIGHT * 1 / 3));
         winBox.setPosition(WIDTH / NUM_ROWS, HEIGHT / 3);
         winBox.setFillColor(sf::Color::Black);
@@ -345,16 +310,11 @@ void game::drawTo(sf::RenderWindow &window, sf::Font &font)
         winText.setFont(font);
 
         std::string winMessage;
-        if (winner == 1)
-        {
+        if (winner == 1) {
             winMessage = "Red wins!";
-        }
-        else if (winner == -1)
-        {
+        } else if (winner == -1) {
             winMessage = "Yellow wins!";
-        }
-        else
-        {
+        } else {
             winMessage = "Draw.";
         }
 

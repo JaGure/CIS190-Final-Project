@@ -65,6 +65,7 @@ int main()
         }
 
         game.drawTo(window, font);
+        game.tick();
 
         // end the current frame
         window.display();
